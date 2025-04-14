@@ -51,6 +51,28 @@ public class TestContext {
     private WebDriver webDriver;
 
     /**
+     * Default constructor for the `TestContext` class.
+     * Initializes the automation environment and the drivers map.
+     */
+    public TestContext() {
+        this(new AutomationEnvironment());
+    }
+
+    /**
+     * Constructs a new `TestContext` instance with the specified automation environment.
+     * This constructor initializes the environment and prepares the map for storing WebDriver instances.
+     *
+     * @param environment the automation environment to associate with this test context.
+     */
+    public TestContext(AutomationEnvironment environment) {
+        // Set the provided automation environment instance.
+        this.environment = environment;
+
+        // Create a new HashMap to store WebDriver instances by their names.
+        drivers = new HashMap<>();
+    }
+
+    /**
      * Gets the automation context for the setup.
      *
      * @return the automation environment.
@@ -188,14 +210,15 @@ public class TestContext {
     }
 
     /**
-     * Walks the current thread's stack trace using while loops and tries to find the first method that
-     * is annotated with {@code @Test}. If this method also has a {@code @DisplayName} annotation,
-     * its value is returned; otherwise, the method name is returned.
+     * Retrieves the properties of the currently executing test method.
+     * This method inspects the stack trace to identify the test method being executed,
+     * and extracts its display name, class name, and method name.
      *
-     * @return the display name of the test method (or method name if no display name is set),
-     * or an empty string if no test method is found in the stack trace.
+     * @return a {@link TestProperties} object containing the test's display name,
+     * class name, and method name. If no test method is found, returns an empty
+     * {@link TestProperties} object with empty strings.
      */
-    public static String getTestDisplayName() {
+    public static TestProperties getTestProperties() {
         // Get the current thread's stack trace
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
@@ -221,16 +244,23 @@ public class TestContext {
                     // Check if the method is annotated with @Test
                     boolean isTestMethod = isMethodName && method.isAnnotationPresent(Test.class);
 
-                    // Continue to the next method if not a test method
+                    // If not a test method, continue to the next method
                     if (!isTestMethod) {
                         j++;
                         continue;
                     }
 
-                    // If the method has a @DisplayName annotation, return its value; otherwise, return the method name
-                    return method.isAnnotationPresent(DisplayName.class)
+                    // Retrieve the display name of the test method, if annotated with @DisplayName
+                    String testDisplayName = method.isAnnotationPresent(DisplayName.class)
                             ? method.getAnnotation(DisplayName.class).value()
-                            : method.getName();
+                            : method.getName(); // Default to the method name if no @DisplayName is present
+
+                    // Retrieve the class name and method name
+                    String className = clazz.getName();
+                    String methodName = method.getName();
+
+                    // Return the test method properties
+                    return new TestProperties(testDisplayName, className, methodName);
                 }
             } catch (ClassNotFoundException e) {
                 // If the class can't be loaded, skip this stack trace element
@@ -240,8 +270,8 @@ public class TestContext {
             i++;
         }
 
-        // Return an empty string if no test method is found
-        return "";
+        // Return an empty TestProperties object if no test method is found
+        return new TestProperties("", "", "");
     }
 
     /**
@@ -362,16 +392,16 @@ public class TestContext {
          * @param webDriver the WebDriver instance used to capture the screenshot.
          */
         public static void newAllureScreenshot(String title, WebDriver webDriver) {
-            // Capture a screenshot from the WebDriver and encode it as a Base64 string.
+            // Capture a screenshot as a Base64-encoded string.
             String base64Screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BASE64);
 
-            // Convert the Base64-encoded screenshot string into a byte array.
-            byte[] bytes = base64Screenshot.getBytes(StandardCharsets.UTF_8);
+            // Decode the Base64 string into binary image bytes.
+            byte[] imageBytes = Base64.getDecoder().decode(base64Screenshot);
 
-            // Convert the Base64-encoded screenshot string into a byte array input stream.
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+            // Wrap the binary data in a ByteArrayInputStream.
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
 
-            // Add the screenshot as an attachment to the Allure report with the specified title.
+            // Attach the screenshot to the Allure report.
             Allure.addAttachment(title, "image/png", inputStream, ".png");
         }
 
@@ -421,5 +451,16 @@ public class TestContext {
             // Add the screenshot as an attachment to the Allure report with the specified title.
             Allure.addAttachment(title, "image/png", inputStream, ".png");
         }
+    }
+
+    /**
+     * Represents the properties of a test method, including its name, description,
+     * class name, and method name.
+     *
+     * @param testDisplayName A brief description of the test.
+     * @param testClassName   The name of the class containing the test.
+     * @param testMethodName  The name of the test method.
+     */
+    public record TestProperties(String testDisplayName, String testClassName, String testMethodName) {
     }
 }

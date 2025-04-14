@@ -38,7 +38,7 @@ class TestCaseBaseTests {
         }
 
         @Override
-        protected void automationTest(TestContext setupModel) {
+        protected void automationTest(TestContext testContext) {
             // This method is intentionally left empty for testing purposes.
         }
     }

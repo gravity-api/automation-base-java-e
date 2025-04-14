@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * Utility class providing helper methods for common operations.
  * This class is not meant to be instantiated.
  */
+@SuppressWarnings("unchecked")
 public class Utilities {
     private static final Logger log = LoggerFactory.getLogger(Utilities.class);
 
@@ -24,10 +25,28 @@ public class Utilities {
     }
 
     /**
+     * Converts an object to a map.
+     * This method performs an unchecked cast of the given object to a map with the specified key and value types.
+     *
+     * @param <K>    the type of keys in the map
+     * @param <V>    the type of values in the map
+     * @param object the object to be cast to a map
+     *
+     * @return the object cast as a map of type <K, V>
+     *
+     * @throws ClassCastException if the object cannot be cast to a map
+     */
+    public static <K, V> Map<K, V> convertToMap(Object object) {
+        // Perform an unchecked cast of the object to a map.
+        return (Map<K, V>) object;
+    }
+
+    /**
      * Loads environment variables from a resource file (.env) and sets them as system properties.
      *
      * @param cls          the class used to load the resource file
      * @param resourcePath the path to the .env file relative to the classpath (e.g., ".env")
+     *
      * @return A map containing the loaded environment variables as key-value pairs.
      */
     public static Map<String, Object> publishEnvironmentProperties(Class<?> cls, String resourcePath) {
