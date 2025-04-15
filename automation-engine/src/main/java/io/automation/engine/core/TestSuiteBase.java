@@ -41,7 +41,7 @@ public abstract class TestSuiteBase {
     }
 
     /**
-     * This method is executed once before all tests in the test suite.
+     * This method is executed once before all cases in the test suite.
      * It performs any necessary setup actions for the entire test suite.
      * Subclasses can override the `onSetup` method to implement custom setup logic.
      * If an exception occurs during setup, it is wrapped in a `TestSetupException`
@@ -64,7 +64,7 @@ public abstract class TestSuiteBase {
     }
 
     /**
-     * This method is executed after all tests in the test suite have been run.
+     * This method is executed after all cases in the test suite have been run.
      * It performs any necessary cleanup actions for the entire test suite.
      * Subclasses can override the `onTeardown` method to implement custom teardown logic.
      * If an exception occurs during teardown, it is wrapped in a `TestTeardownException`
@@ -88,7 +88,7 @@ public abstract class TestSuiteBase {
 
     /**
      * This method is executed before each test in the test suite.
-     * It performs any necessary setup actions for individual tests.
+     * It performs any necessary setup actions for individual cases.
      * Subclasses can override the `onTestSetup` method to implement custom setup logic.
      */
     @BeforeEach
@@ -111,7 +111,7 @@ public abstract class TestSuiteBase {
     /**
      * This method is called after each test execution to perform any necessary teardown actions.
      * It invokes the `onTestTeardown` method, which can be overridden by subclasses to implement
-     * custom teardown logic for individual tests. If an exception occurs during teardown, it is
+     * custom teardown logic for individual cases. If an exception occurs during teardown, it is
      * wrapped in a `TestTeardownException` and rethrown as a `RuntimeException`.
      */
     @AfterEach
@@ -157,7 +157,7 @@ public abstract class TestSuiteBase {
 
     /**
      * This method is called before each test execution to perform any necessary setup actions.
-     * Subclasses can override this method to implement custom setup logic for individual tests.
+     * Subclasses can override this method to implement custom setup logic for individual cases.
      *
      * @param environmentProperties A map containing the environment properties for the test context.
      */
@@ -167,7 +167,7 @@ public abstract class TestSuiteBase {
 
     /**
      * This method is called after each test execution to perform any necessary teardown actions.
-     * Subclasses can override this method to implement custom teardown logic for individual tests.
+     * Subclasses can override this method to implement custom teardown logic for individual cases.
      *
      * @param environmentProperties A map containing the environment properties for the test context.
      */

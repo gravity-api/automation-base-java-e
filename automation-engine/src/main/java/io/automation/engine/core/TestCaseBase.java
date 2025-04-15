@@ -1,9 +1,11 @@
 package io.automation.engine.core;
 
+import io.automation.engine.exceptions.AutomationException;
 import io.automation.engine.exceptions.TestSetupException;
 import io.automation.engine.exceptions.TestTeardownException;
 import io.automation.engine.models.*;
 import io.qameta.allure.Allure;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -16,10 +18,7 @@ import java.io.StringWriter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -27,13 +26,16 @@ import java.util.concurrent.atomic.AtomicReference;
  * Provides common functionality for managing test execution, including setup, teardown,
  * retry logic, and environment initialization.
  */
-@SuppressWarnings({"squid:S4275", "unused"})
+@SuppressWarnings({"squid:S4275", "unused", "squid:S2142", "BusyWait"})
 public abstract class TestCaseBase {
     // Logger for the TestCaseBase class, used for logging messages at the class level.
     private static final Logger logger = LoggerFactory.getLogger(TestCaseBase.class);
 
     // Logger specific to the instance of the subclass, used for instance-level logging.
     private final Logger instanceLogger;
+
+    // The test result model to store results of the test case execution.
+    private TestResultModel testResult;
 
     // The automation environment containing context properties and configurations for the test case.
     private AutomationEnvironment environment;
@@ -52,6 +54,9 @@ public abstract class TestCaseBase {
     protected TestCaseBase() {
         // Initialize a logger specific to the subclass of TestCaseBase.
         instanceLogger = LoggerFactory.getLogger(this.getClass());
+
+        // Initialize the test result model to store results of the test case execution.
+        testResult = new TestResultModel();
 
         // Initialize the automation environment by loading context properties.
         this.environment = initializeEnvironment(this.getClass());
@@ -182,16 +187,12 @@ public abstract class TestCaseBase {
      *
      * @return a {@link TestResultModel} containing the results of the test execution.
      */
-    @SuppressWarnings({"squid:S2142"})
     public TestResultModel invoke() {
         // Initialize the test context with the current environment.
         TestContext testContext = new TestContext(environment);
 
         // List to store exceptions encountered during test execution.
         List<TestPhaseExceptionModel> exceptions = new ArrayList<>();
-
-        // Model to store the test result.
-        AtomicReference<TestResultModel> testResult = new AtomicReference<>(new TestResultModel());
 
         // Retrieve test properties for logging and reporting purposes.
         TestContext.TestProperties testProperties = TestContext.getTestProperties();
@@ -202,86 +203,89 @@ public abstract class TestCaseBase {
             int attempt = i;
 
             // Log the attempt number and start the test case execution.
-            Allure.step("Attempt Number: " + attempt, () -> {
-                // Update the context with the current attempt number.
-                testContext.getEnvironment().getContextProperties().put("ATTEMPT", attempt);
+            try {
+                AllureExtensions.throwableStep("Attempt Number: " + attempt, () -> {
+                    // Update the context with the current attempt number.
+                    testContext.getEnvironment().getContextProperties().put("ATTEMPT", attempt);
 
-                // Invoke the test case execution for the current attempt.
-                testResult.set(invoke(attempt, this, testContext));
+                    // Invoke the test case execution for the current attempt.
+                    testResult = invoke(attempt, this, testContext);
 
-                // Collect exceptions from the current attempt.
-                exceptions.addAll(testResult.get().getExceptions());
-                testResult.get().setAttemptNumber(attempt);
-                testResult.get().setExceptions(exceptions);
+                    // Collect exceptions from the current attempt.
+                    exceptions.addAll(testResult.getExceptions());
+                    testResult.setAttemptNumber(attempt);
+                    testResult.getExceptions().addAll(exceptions);
 
-                // Retrieve and set metrics from the environment context.
-                Object environmentMetrics = testContext
-                        .getEnvironment()
-                        .getContextProperties()
-                        .getOrDefault("metrics", new HashMap<String, Object>());
-                Map<String, Object> metrics = Utilities.convertToMap(environmentMetrics);
-                testResult.get().setMetrics(metrics);
+                    // Retrieve and set metrics from the environment context.
+                    Object environmentMetrics = testContext
+                            .getEnvironment()
+                            .getContextProperties()
+                            .getOrDefault("metrics", new HashMap<String, Object>());
+                    Map<String, Object> metrics = Utilities.convertToMap(environmentMetrics);
+                    testResult.setMetrics(metrics);
 
-                // Retrieve and set auditable actions from the environment context.
-                Object environmentAuditableActions = testContext
-                        .getEnvironment()
-                        .getContextProperties()
-                        .getOrDefault("auditableActions", new HashMap<String, Object>());
-                Map<String, Object> auditableActions = Utilities.convertToMap(environmentAuditableActions);
-                testResult.get().setAuditableActions(auditableActions);
+                    // Retrieve and set auditable actions from the environment context.
+                    Object environmentAuditableActions = testContext
+                            .getEnvironment()
+                            .getContextProperties()
+                            .getOrDefault("auditableActions", new HashMap<String, Object>());
+                    Map<String, Object> auditableActions = Utilities.convertToMap(environmentAuditableActions);
+                    testResult.setAuditableActions(auditableActions);
 
-                // Retrieve and set the duration for finding elements during the test.
-                long findElementsDuration = (long) testContext
-                        .getEnvironment()
-                        .getTestData()
-                        .getOrDefault("findElementsDuration", 0L);
-                testResult.get().setFindElementsDuration(Duration.ofNanos(findElementsDuration));
+                    // Retrieve and set the duration for finding elements during the test.
+                    long findElementsDuration = (long) testContext
+                            .getEnvironment()
+                            .getTestData()
+                            .getOrDefault("findElementsDuration", 0L);
+                    testResult.setFindElementsDuration(Duration.ofNanos(findElementsDuration));
 
-                // Calculate and set the durations for setup, teardown, and test execution phases.
-                testResult.get().setSetupDuration(Duration.between(testResult.get().getSetupStartTime(), testResult.get().getSetupEndTime()));
-                testResult.get().setTeardownDuration(Duration.between(testResult.get().getTeardownStartTime(), testResult.get().getTeardownEndTime()));
-                testResult.get().setTestDuration(Duration.between(testResult.get().getTestStartTime(), testResult.get().getTestEndTime()));
+                    // Calculate and set the durations for setup, teardown, and test execution phases.
+                    testResult.setSetupDuration(Duration.between(testResult.getSetupStartTime(), testResult.getSetupEndTime()));
+                    testResult.setTeardownDuration(Duration.between(testResult.getTeardownStartTime(), testResult.getTeardownEndTime()));
+                    testResult.setTestDuration(Duration.between(testResult.getTestStartTime(), testResult.getTestEndTime()));
 
-                // Set display name, class name, and method name for the test result.
-                testResult.get().setDisplayName(testProperties.testDisplayName());
-                testResult.get().setTestClassName(testProperties.testClassName());
-                testResult.get().setTestMethodName(testProperties.testMethodName());
+                    // Set display name, class name, and method name for the test result.
+                    testResult.setDisplayName(testProperties.testDisplayName());
+                    testResult.setTestClassName(testProperties.testClassName());
+                    testResult.setTestMethodName(testProperties.testMethodName());
 
-                // Determine the result of the test case (Pass/Fail) and log it.
-                String result = testResult.get().isPassed() ? "Pass" : "Fail";
-                logger.info("Test case '{}' has completed with a result of '{}'.", this.getClass().getName(), result);
+                    // Determine the result of the test case (Pass/Fail) and log it.
+                    String result = testResult.isPassed() ? "Pass" : "Fail";
+                    String message = "Test case '{}' has completed with a result of '{}'.";
+                    logger.info(message, this.getClass().getName(), result);
 
-                // If the test passed, exit the retry loop.
-                if (testResult.get().isPassed()) {
-                    return;
+                    // throw the last exception if the test case failed
+                    confirmTestCase("Test case failed on retry attempt: " + attempt, testResult);
+                });
+            } catch (Throwable e) {
+                // Silently catch any exceptions that occur during the test case execution.
+            }
+
+            // If the test passed, exit the retry loop.
+            if (testResult.isPassed()) {
+                break;
+            }
+
+            // If the test failed and more attempts are allowed, wait before retrying.
+            if (attempt < numberOfAttempts) {
+                try {
+                    Thread.sleep(attemptsInterval);
+                } catch (Exception e) {
+                    // Log any errors that occur during the wait period.
+                    logger.error("Error during test case execution: ", e);
                 }
-
-                // If the test failed and more attempts are allowed, wait before retrying.
-                if (attempt < numberOfAttempts) {
-                    try {
-                        Thread.sleep(attemptsInterval);
-                    } catch (Exception e) {
-                        // Log any errors that occur during the wait period.
-                        logger.error("Error during test case execution: ", e);
-                    }
-                }
-            });
+            }
         }
 
+        // throw the last exception if the test case failed
+        confirmTestCase("Test case failed after all retry attempts.", testResult);
+
         // Return the final test result after all attempts.
-        return testResult.get();
+        return testResult;
     }
 
-    /**
-     * Invokes the test case execution, including setup, test execution, and teardown phases.
-     * Handles retries, exception logging, and Allure reporting.
-     *
-     * @param attempt     the current attempt number for retry logic.
-     * @param testCase    the test case instance to execute.
-     * @param testContext the context containing environment and WebDriver configurations.
-     *
-     * @return a {@link TestResultModel} containing the results of the test execution.
-     */
+    // Invokes the test case execution, including setup, test execution, and teardown phases.
+    // Handles retries, exception logging, and AllureExtensions reporting.
     private static TestResultModel invoke(int attempt, TestCaseBase testCase, TestContext testContext) {
         // Generate a default run ID if none is provided in the context properties.
         String defaultRunId = AssemblyInitialize.TEST_RUN_ID;
@@ -312,7 +316,7 @@ public abstract class TestCaseBase {
             testResult.setTestStartTime(LocalDateTime.now());
 
             // Execute the test case's main logic within the "Test Invocation Phase".
-            Allure.step("Test Invocation Phase", () -> testCase.automationTest(testContext));
+            AllureExtensions.throwableStep("Test Invocation Phase", () -> testCase.automationTest(testContext));
 
             // Mark the test as passed if no exceptions occurred.
             testResult.setPassed(true);
@@ -321,19 +325,22 @@ public abstract class TestCaseBase {
             return testResult;
 
         } catch (TestAbortedException e) {
-            // Attach the exception details to the Allure report and rethrow the exception.
+            // Attach the exception details to the AllureExtensions report and rethrow the exception.
             newExceptionAttachment(e);
             throw e;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // Handle unexpected exceptions during test execution.
             TestPhaseExceptionModel exception = newException(e, attempt, testContext);
 
-            // Attach the exception details and a screenshot to the Allure report.
+            // Add the exception to the list of exceptions encountered during the test.
+            testResult.addException(exception);
+
+            // Attach the exception details and a screenshot to the AllureExtensions report.
             newExceptionAttachment(e);
 
-            // Add screenshot to the Allure report if available.
-            if(exception.getScreenshot()!= null && !exception.getScreenshot().isEmpty()) {
-                String title = testResult.getRunId() + testCase.getClass().getName() + attempt;
+            // Add screenshot to the AllureExtensions report if available.
+            if (exception.getScreenshot() != null && !exception.getScreenshot().isEmpty()) {
+                String title = testResult.getRunId() + "." + testCase.getClass().getName() + "." + attempt;
                 TestContext.AllureUtility.newAllureScreenshot(title, exception.getScreenshot());
             }
 
@@ -344,7 +351,7 @@ public abstract class TestCaseBase {
             testResult.setTestEndTime(LocalDateTime.now());
 
             // Add any collected exceptions to the test result.
-            testResult.setExceptions(exceptions);
+            testResult.getExceptions().addAll(exceptions);
 
             // Execute the teardown phase and update the test result with teardown results.
             TestPhaseResultModel teardownResult = Allure
@@ -354,6 +361,32 @@ public abstract class TestCaseBase {
             // Clear all WebDriver instances from the test context.
             testContext.clearDrivers();
         }
+    }
+
+    /**
+     * Confirms the test case result by checking if it passed without any exceptions.
+     * If the test case failed, it throws an assertion failure with the provided message
+     * and the last encountered exception.
+     *
+     * @param message    the message to include in the assertion failure if the test case failed.
+     * @param testResult the {@link TestResultModel} containing the test case results.
+     */
+    private static void confirmTestCase(String message, TestResultModel testResult) {
+        // Check if the test case passed without any exceptions.
+        if (testResult.getExceptions().isEmpty() && testResult.isPassed()) {
+            return;
+        }
+
+        // Retrieve the last exception if the test case failed.
+        Throwable exception = testResult.getExceptions().isEmpty()
+                ? null
+                : testResult.getExceptions().get(testResult.getExceptions().size() - 1).getException();
+
+        // If the exception is null, use the provided message.
+        message = exception == null ? message : Utilities.getBaseException(exception).getMessage();
+
+        // Fail the test case with the provided message and the last encountered exception.
+        Assertions.fail(message, exception);
     }
 
     /**
@@ -448,7 +481,7 @@ public abstract class TestCaseBase {
         return result;
     }
 
-    // Attaches the stack trace of a given exception to the Allure report as a text file.
+    // Attaches the stack trace of a given exception to the AllureExtensions report as a text file.
     private static void newExceptionAttachment(Throwable e) {
         // Create a StringWriter to capture the exception's stack trace as a string.
         StringWriter stringWriter = new StringWriter();
@@ -459,7 +492,7 @@ public abstract class TestCaseBase {
         // Convert the captured stack trace to a string.
         String exceptionStackTrace = stringWriter.toString();
 
-        // Create new Allure attachment with the stack trace.
+        // Create new AllureExtensions attachment with the stack trace.
         TestContext.AllureUtility.newAllureAttachment("Exception Stack Trace", exceptionStackTrace);
     }
 
@@ -534,7 +567,7 @@ public abstract class TestCaseBase {
 
     // Creates a new instance of {@link TestPhaseExceptionModel} with details about the exception,
     // including the attempt number, context properties, display name, and a screenshot if available.
-    private static TestPhaseExceptionModel newException(Exception exception, int attempt, TestContext testContext) {
+    private static TestPhaseExceptionModel newException(Throwable exception, int attempt, TestContext testContext) {
         // Create a new TestPhaseExceptionModel instance with the provided exception.
         TestPhaseExceptionModel exceptionModel = new TestPhaseExceptionModel(exception);
 

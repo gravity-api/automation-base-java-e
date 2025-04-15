@@ -17,7 +17,7 @@ import java.util.Properties;
  * The `AssemblyInitialize` class is responsible for initializing and managing
  * global environment properties and configurations for the automation framework.
  * It provides utility methods to retrieve and set up environment properties,
- * including integration with Allure reporting.
+ * including integration with AllureExtensions reporting.
  */
 public class AssemblyInitialize {
     // This constant holds the epoch time in milliseconds as a String, set once when the class is loaded.
@@ -52,7 +52,7 @@ public class AssemblyInitialize {
         // Add the `TEST_RUN_ID` to the global environment map.
         globalEnvironment.put("TEST_RUN_ID", TEST_RUN_ID);
 
-        // Set the `TEST_RUN_ID` in the system properties for Allure reporting.
+        // Set the `TEST_RUN_ID` in the system properties for AllureExtensions reporting.
         setAllureEnvironment();
 
         // Return the global environment map.
@@ -60,25 +60,25 @@ public class AssemblyInitialize {
     }
 
     /**
-     * Sets the Allure environment properties by creating an `environment.properties` file
-     * in the Allure results directory. This method ensures the directory exists, retrieves
+     * Sets the AllureExtensions environment properties by creating an `environment.properties` file
+     * in the AllureExtensions results directory. This method ensures the directory exists, retrieves
      * global environment properties, and writes them to the file.
      */
     private static void setAllureEnvironment() {
-        // Load Allure-specific properties from the "allure.properties" file.
+        // Load AllureExtensions-specific properties from the "allure.properties" file.
         Map<String, Object> allureProperties =
                 Utilities.publishEnvironmentProperties(AssemblyInitialize.class, "allure.properties");
 
-        // Retrieve the Allure results directory path from the properties, defaulting to an empty string if not specified.
+        // Retrieve the AllureExtensions results directory path from the properties, defaulting to an empty string if not specified.
         String allurePath = allureProperties.getOrDefault("allure.results.directory", "").toString();
 
-        // Ensure the Allure results directory exists by creating it if it does not already exist.
+        // Ensure the AllureExtensions results directory exists by creating it if it does not already exist.
         Path allureDirPath = Path.of(allurePath);
         try {
             Files.createDirectories(allureDirPath);
         } catch (IOException e) {
             // Log an error if the directory creation fails.
-            logger.error("Failed to create Allure results directory: {}", allurePath, e);
+            logger.error("Failed to create AllureExtensions results directory: {}", allurePath, e);
         }
 
         // Create a `Properties` object to store the global environment properties.
@@ -92,17 +92,17 @@ public class AssemblyInitialize {
             }
         }
 
-        // Build the file path for the `environment.properties` file in the Allure results directory.
+        // Build the file path for the `environment.properties` file in the AllureExtensions results directory.
         String filePath = allurePath.endsWith(File.separator)
                 ? allurePath + "environment.properties"
                 : allurePath + File.separator + "environment.properties";
 
         // Write the properties to the `environment.properties` file.
         try (OutputStream out = new FileOutputStream(filePath)) {
-            properties.store(out, "Allure Environment Properties");
+            properties.store(out, "AllureExtensions Environment Properties");
         } catch (IOException e) {
             // Log an error if writing to the file fails.
-            logger.error("Failed to write Allure environment properties to file: {}", filePath, e);
+            logger.error("Failed to write AllureExtensions environment properties to file: {}", filePath, e);
         }
     }
 }

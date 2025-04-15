@@ -81,4 +81,21 @@
 
     <!-- Packaging Type -->
     <packaging>jar</packaging>
+
+    <dependencies>
+        <!-- Engine Reference -->
+        <dependency>
+            <groupId>io.automation</groupId>
+            <artifactId>automation-engine</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Framework Reference -->
+        <dependency>
+            <groupId>io.automation</groupId>
+            <artifactId>automation-framework</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 </project>

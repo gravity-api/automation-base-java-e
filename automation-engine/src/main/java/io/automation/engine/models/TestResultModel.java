@@ -3,9 +3,11 @@ package io.automation.engine.models;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class TestResultModel {
     private int attemptNumber;
     private Map<String, Object> auditableActions;
@@ -26,6 +28,24 @@ public class TestResultModel {
     private String testMethodName;
     private LocalDateTime testStartTime;
     private Duration testDuration;
+
+    /**
+     * Constructor to initialize the TestResultModel with default values.
+     */
+    public TestResultModel() {
+        this.auditableActions = new HashMap<>();
+        this.exceptions = new ArrayList<>();
+        this.metrics = new HashMap<>();
+    }
+
+    /**
+     * Adds an exception to the list of exceptions that occurred during the test case.
+     *
+     * @param exception the exception to add.
+     */
+    public void addException(TestPhaseExceptionModel exception) {
+        exceptions.add(exception);
+    }
 
     /**
      * Gets the current attempt number for executing the test case.

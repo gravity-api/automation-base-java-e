@@ -10,7 +10,7 @@ public class TestPhaseExceptionModel {
     private int attemptReference;
     private Map<String, Object> context;
     private String displayName;
-    private Exception exception;
+    private Throwable exception;
     private String reasonPhrase;
     private String screenshot;
 
@@ -26,7 +26,7 @@ public class TestPhaseExceptionModel {
      *
      * @param exception an Exception related to the TestPhaseExceptionModel.
      */
-    public TestPhaseExceptionModel(Exception exception) {
+    public TestPhaseExceptionModel(Throwable exception) {
         // Initialize the context dictionary.
         this.context = new HashMap<>();
 
@@ -110,7 +110,7 @@ public class TestPhaseExceptionModel {
      *
      * @return the exception.
      */
-    public Exception getException() {
+    public Throwable getException() {
         return exception;
     }
 
@@ -172,13 +172,13 @@ public class TestPhaseExceptionModel {
     }
 
     // Recursively retrieves the base exception from the provided exception.
-    private static Exception getBaseException(Exception exception) {
+    private static Throwable getBaseException(Throwable exception) {
         // Start with the provided exception
-        Exception current = exception;
+        Throwable current = exception;
 
         // Traverse the chain of causes until the root cause is found
         while (current.getCause() != null) {
-            current = (Exception) current.getCause();
+            current = current.getCause();
         }
 
         // Return the root cause exception

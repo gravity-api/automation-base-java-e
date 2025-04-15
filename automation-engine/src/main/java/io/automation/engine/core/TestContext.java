@@ -344,8 +344,8 @@ public class TestContext {
     }
 
     /**
-     * Utility class for Allure reporting.
-     * Provides methods to log messages, capture screenshots, and attach them to Allure reports.
+     * Utility class for AllureExtensions reporting.
+     * Provides methods to log messages, capture screenshots, and attach them to AllureExtensions reports.
      */
     public static class AllureUtility {
         /**
@@ -356,10 +356,10 @@ public class TestContext {
         }
 
         /**
-         * Adds an attachment to the Allure report.
+         * Adds an attachment to the AllureExtensions report.
          * This method creates a text file attachment with the specified name and content.
          *
-         * @param name    the name of the attachment to be displayed in the Allure report.
+         * @param name    the name of the attachment to be displayed in the AllureExtensions report.
          * @param content the content of the attachment as a string.
          */
         public static void newAllureAttachment(String name, String content) {
@@ -369,26 +369,26 @@ public class TestContext {
             // Create a ByteArrayInputStream from the byte array for the attachment.
             ByteArrayInputStream messageStream = new ByteArrayInputStream(bytes);
 
-            // Add the attachment to the Allure report with the specified name and content type.
+            // Add the attachment to the AllureExtensions report with the specified name and content type.
             Allure.addAttachment(name, "text/plain", messageStream, ".txt");
         }
 
         /**
-         * Logs a message as an Allure step.
-         * This method is used to add a step in the Allure report with the provided message.
+         * Logs a message as an AllureExtensions step.
+         * This method is used to add a step in the AllureExtensions report with the provided message.
          *
-         * @param message the message to log as an Allure step.
+         * @param message the message to log as an AllureExtensions step.
          */
         @Step("{message}")
         public static void newAllureMessage(String message) {
-            // This method is a placeholder for an Allure step message.
-            // The @Step annotation automatically logs the message in the Allure report.
+            // This method is a placeholder for an AllureExtensions step message.
+            // The @Step annotation automatically logs the message in the AllureExtensions report.
         }
 
         /**
-         * Captures a screenshot using the provided WebDriver instance and attaches it to the Allure report.
+         * Captures a screenshot using the provided WebDriver instance and attaches it to the AllureExtensions report.
          *
-         * @param title     the title for the screenshot attachment in the Allure report.
+         * @param title     the title for the screenshot attachment in the AllureExtensions report.
          * @param webDriver the WebDriver instance used to capture the screenshot.
          */
         public static void newAllureScreenshot(String title, WebDriver webDriver) {
@@ -401,15 +401,15 @@ public class TestContext {
             // Wrap the binary data in a ByteArrayInputStream.
             ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
 
-            // Attach the screenshot to the Allure report.
+            // Attach the screenshot to the AllureExtensions report.
             Allure.addAttachment(title, "image/png", inputStream, ".png");
         }
 
         /**
          * Reads the provided screenshot file, converts it to a Base64-encoded string,
-         * and attaches it to the Allure report using the specified title.
+         * and attaches it to the AllureExtensions report using the specified title.
          *
-         * @param title          the title for the Allure attachment.
+         * @param title          the title for the AllureExtensions attachment.
          * @param screenshotFile the screenshot file (should be a PNG image).
          */
         public static void newAllureScreenshot(String title, File screenshotFile) {
@@ -425,7 +425,7 @@ public class TestContext {
                 // Encode the bytes to a Base64 string.
                 String base64Screenshot = Base64.getEncoder().encodeToString(fileBytes);
 
-                // Attach the screenshot to the Allure report.
+                // Attach the screenshot to the AllureExtensions report.
                 // The attachment is named by 'title', uses MIME type "image/png", and is recognized as a PNG file.
                 newAllureScreenshot(title, base64Screenshot);
             } catch (IOException e) {
@@ -434,21 +434,21 @@ public class TestContext {
         }
 
         /**
-         * Attaches a screenshot to the Allure report.
+         * Attaches a screenshot to the AllureExtensions report.
          * This method takes a Base64-encoded screenshot string, converts it into a byte array input stream,
-         * and attaches it to the Allure report with the specified title.
+         * and attaches it to the AllureExtensions report with the specified title.
          *
-         * @param title            the title for the Allure attachment.
+         * @param title            the title for the AllureExtensions attachment.
          * @param base64Screenshot the Base64-encoded screenshot string.
          */
         public static void newAllureScreenshot(String title, String base64Screenshot) {
-            // Convert the Base64-encoded screenshot string into a byte array.
-            byte[] bytes = base64Screenshot.getBytes(StandardCharsets.UTF_8);
+            // Decode the Base64 string into binary image bytes.
+            byte[] imageBytes = Base64.getDecoder().decode(base64Screenshot);
 
-            // Convert the Base64-encoded screenshot string into a byte array input stream.
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+            // Wrap the binary data in a ByteArrayInputStream.
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
 
-            // Add the screenshot as an attachment to the Allure report with the specified title.
+            // Attach the screenshot to the AllureExtensions report.
             Allure.addAttachment(title, "image/png", inputStream, ".png");
         }
     }

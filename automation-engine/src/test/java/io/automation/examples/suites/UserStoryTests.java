@@ -1,10 +1,10 @@
 package io.automation.examples.suites;
 
 import io.automation.engine.core.TestSuiteBase;
-import io.automation.engine.models.TestResultModel;
 import io.automation.examples.cases.C123456;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Story;
+
 import org.junit.jupiter.api.*;
 
 import java.util.Map;
@@ -60,9 +60,6 @@ class UserStoryTests extends TestSuiteBase {
                 .put("FromSetup", getEnvironmentProperties().get("FromSetup"));
 
         // Invoke the test case and get the result
-        TestResultModel result = testCase.invoke();
-
-        // Assert the result of the test case
-        Assertions.assertTrue(result.isPassed());
+        testCase.invoke();
     }
 }

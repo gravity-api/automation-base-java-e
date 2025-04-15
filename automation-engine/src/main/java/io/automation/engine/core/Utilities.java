@@ -129,4 +129,25 @@ public class Utilities {
         // Return the map of environment properties.
         return environmentProperties;
     }
+
+    /**
+     * Recursively retrieves the root cause of a given throwable.
+     * This method traverses the chain of causes to find the base exception
+     * that does not have any further cause.
+     *
+     * @param throwable the throwable whose root cause is to be determined
+     * @return the base exception in the cause chain
+     */
+    public static Throwable getBaseException(Throwable throwable) {
+        // Get the immediate cause of the throwable.
+        Throwable cause = throwable.getCause();
+
+        // If a cause exists, recursively call this method to find the base exception.
+        if (cause != null) {
+            return getBaseException(cause);
+        }
+
+        // If no cause exists, return the current throwable as the base exception.
+        return throwable;
+    }
 }

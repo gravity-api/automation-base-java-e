@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Abstract base class for UI controller handlers.
  * This class provides common functionality for handling UI interactions
- * and managing test context during automated tests.
+ * and managing test context during automated cases.
  */
 @SuppressWarnings("unused")
 public abstract class UiControllerHandlerBase extends ModelBase {

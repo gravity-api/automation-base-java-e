@@ -23,7 +23,7 @@ java -cp <path-to-jar> <main-class> <options>
 Assuming your shaded JAR is located at `target/junit-cmd-tests-1.0-SNAPSHOT-all.jar` and you want to run the `testAdd` method in the `CalculatorTest` class, the command would be:
 
 ```bash
-java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method com.automation.CalculatorTest#testAdd --details verbose
+java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method io.automation.examples.suites.CalculatorTest#testAdd --details verbose
 ```
 
 ### **2. Example Commands**
@@ -33,7 +33,7 @@ java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.
 To run a specific test method (`testAdd`):
 
 ```bash
-java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method com.automation.CalculatorTest#testAdd --details verbose
+java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method io.automation.examples.suites.CalculatorTest#testAdd --details verbose
 ```
 
 #### **b. Run Multiple Test Methods**
@@ -41,7 +41,7 @@ java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.
 To run multiple specific test methods (`testAdd` and `testSubtract`):
 
 ```bash
-java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method com.automation.CalculatorTest#testAdd --select-method com.automation.CalculatorTest#testSubtract --details verbose
+java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method io.automation.examples.suites.CalculatorTest#testAdd --select-method io.automation.examples.suites.CalculatorTest#testSubtract --details verbose
 ```
 
 #### **c. Run All Tests in a Specific Class**
@@ -49,7 +49,7 @@ java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.
 To run all tests within the `CalculatorTest` class:
 
 ```bash
-java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-class com.automation.CalculatorTest --details verbose
+java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-class io.automation.examples.suites.CalculatorTest --details verbose
 ```
 
 ### **3. Explanation of Command Components**
@@ -60,9 +60,9 @@ java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.
 - **`org.junit.platform.console.ConsoleLauncher`:**
   - Specifies the main class to execute, which is JUnit's Console Launcher.
 
-- **`--select-method com.automation.CalculatorTest#testAdd`:**
+- **`--select-method io.automation.examples.suites.CalculatorTest#testAdd`:**
   - **`--select-method`**: Directs JUnit to run the specified test method.
-  - **`com.automation.CalculatorTest#testAdd`**: Fully qualified name of the test class and method.
+  - **`io.automation.examples.suites.CalculatorTest#testAdd`**: Fully qualified name of the test class and method.
 
 - **`--details verbose`:**
   - Provides detailed output of the test execution.
@@ -72,7 +72,7 @@ java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.
 Open your terminal or command prompt, navigate to your project directory, and execute the desired command. For example:
 
 ```bash
-java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method com.automation.CalculatorTest#testAdd --details verbose
+java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method io.automation.examples.suites.CalculatorTest#testAdd --details verbose
 ```
 
 ### **5. Additional Tips**
@@ -84,7 +84,7 @@ java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.
   - If your method names or class names contain special characters, consider enclosing the selector in quotes:
   
     ```bash
-    --select-method "com.automation.CalculatorTest#testAdd"
+    --select-method "io.automation.examples.suites.CalculatorTest#testAdd"
     ```
 
 - **Listing Available Tests:**
@@ -110,7 +110,7 @@ import org.junit.platform.console.ConsoleLauncher;
 public class TestRunner {
     public static void main(String[] args) {
         ConsoleLauncher.main(new String[]{
-            "--select-method", "com.automation.CalculatorTest#testAdd",
+            "--select-method", "io.automation.examples.suites.CalculatorTest#testAdd",
             "--details", "verbose"
         });
     }
@@ -151,19 +151,19 @@ Here are the primary commands you can use based on your requirements:
 #### **a. Run a Specific Test Method:**
 
 ```bash
-java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method com.automation.CalculatorTest#testAdd --details verbose
+java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method io.automation.examples.suites.CalculatorTest#testAdd --details verbose
 ```
 
 #### **b. Run Multiple Specific Test Methods:**
 
 ```bash
-java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method com.automation.CalculatorTest#testAdd --select-method com.automation.CalculatorTest#testSubtract --details verbose
+java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-method io.automation.examples.suites.CalculatorTest#testAdd --select-method io.automation.examples.suites.CalculatorTest#testSubtract --details verbose
 ```
 
 #### **c. Run All Tests in a Specific Class:**
 
 ```bash
-java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-class com.automation.CalculatorTest --details verbose
+java -cp target/junit-cmd-cases-1.0-SNAPSHOT-all.jar org.junit.platform.console.ConsoleLauncher --select-class io.automation.examples.suites.CalculatorTest --details verbose
 ```
 
 #### **d. List All Discovered Tests:**
