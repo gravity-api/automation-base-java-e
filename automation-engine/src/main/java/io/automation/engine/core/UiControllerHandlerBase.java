@@ -1,6 +1,7 @@
 package io.automation.engine.core;
 
 import com.google.common.base.Stopwatch;
+import io.qameta.allure.Allure;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
  * and managing test context during automated cases.
  */
 @SuppressWarnings("unused")
-public abstract class UiControllerHandlerBase extends ModelBase {
+public abstract class UiControllerHandlerBase extends PageModelBase {
     /**
      * Constructor for the UiControllerHandlerBase class.
      * Initializes the base class with the provided test context.
@@ -46,7 +47,7 @@ public abstract class UiControllerHandlerBase extends ModelBase {
 
         try {
             // Delegate the actual element retrieval to the abstract method.
-            return onGetElement(query);
+            return Allure.step("Retrieve WebElement using query: " + query, () -> onGetElement(query));
         } finally {
             // Stop the stopwatch and calculate the elapsed time.
             stopwatch.stop();

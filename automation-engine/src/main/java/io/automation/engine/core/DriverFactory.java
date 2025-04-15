@@ -2,6 +2,7 @@ package io.automation.engine.core;
 
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
@@ -9,6 +10,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.service.DriverService;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
 import java.lang.reflect.Constructor;
@@ -235,8 +237,8 @@ public class DriverFactory {
             return switch (driverType.toUpperCase()) {
                 case Drivers.FIREFOX -> new FirefoxDriver(options == null ? new FirefoxOptions() : new FirefoxOptions().merge(options));
                 case Drivers.EDGE -> new EdgeDriver(options == null ? defaultEdgeOptions : new EdgeOptions().merge(options));
-                case Drivers.SAFARI -> new RemoteWebDriver(options == null ? new SafariOptions() : new SafariOptions().merge(options));
-                default -> new RemoteWebDriver(options == null ? defaultChromeOptions : new ChromeOptions().merge(options));
+                case Drivers.SAFARI -> new SafariDriver(options == null ? new SafariOptions() : new SafariOptions().merge(options));
+                default -> new ChromeDriver(options == null ? defaultChromeOptions : new ChromeOptions().merge(options));
             };
         } catch (Exception e) {
             // Throw a runtime exception if the WebDriver instance cannot be created.

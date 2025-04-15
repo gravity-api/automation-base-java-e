@@ -1,10 +1,10 @@
 package io.automation.engine.core;
 
-import io.automation.engine.exceptions.AutomationException;
 import io.automation.engine.exceptions.TestSetupException;
 import io.automation.engine.exceptions.TestTeardownException;
 import io.automation.engine.models.*;
 import io.qameta.allure.Allure;
+
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -19,7 +19,6 @@ import java.io.StringWriter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Abstract base class for test cases in the automation framework.
@@ -303,7 +302,8 @@ public abstract class TestCaseBase {
 
         try {
             // Execute the setup phase and update the test result with setup results.
-            TestPhaseResultModel setupResult = Allure.step("Test Setup Phase", () -> setup(testCase, testContext));
+            TestPhaseResultModel setupResult =
+                    Allure.step("Test Setup Phase", () -> setup(testCase, testContext));
             testResult.updateSetupResults(setupResult);
 
             // If a setup exception occurred, add it to the exceptions list and abort the test.
@@ -354,8 +354,8 @@ public abstract class TestCaseBase {
             testResult.getExceptions().addAll(exceptions);
 
             // Execute the teardown phase and update the test result with teardown results.
-            TestPhaseResultModel teardownResult = Allure
-                    .step("Test Teardown Phase", () -> teardown(testCase, testContext));
+            TestPhaseResultModel teardownResult =
+                    Allure.step("Test Teardown Phase", () -> teardown(testCase, testContext));
             testResult.updateTeardownResults(teardownResult);
 
             // Clear all WebDriver instances from the test context.

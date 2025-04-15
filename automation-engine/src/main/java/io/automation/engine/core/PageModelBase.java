@@ -15,9 +15,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public abstract class ModelBase implements FluentModel {
+public abstract class PageModelBase implements FluentModel {
     // Logger for the TestCaseBase class, used for logging messages at the class level.
-    private static final Logger logger = LoggerFactory.getLogger(ModelBase.class);
+    private static final Logger logger = LoggerFactory.getLogger(PageModelBase.class);
 
     // Holds the test context containing configuration and WebDriver information
     private final TestContext testContext;
@@ -26,24 +26,24 @@ public abstract class ModelBase implements FluentModel {
     private final WebDriverWait webDriverWait;
 
     /**
-     * Constructs a `ModelBase` instance with the given `TestContext`.
+     * Constructs a `PageModelBase` instance with the given `TestContext`.
      * This constructor delegates to the other constructor, passing `null` as the URI.
      *
      * @param testContext the `TestContext` containing configuration and WebDriver information
      */
-    protected ModelBase(TestContext testContext) {
+    protected PageModelBase(TestContext testContext) {
         // Delegate to the other constructor with a null URI
         this(testContext, null);
     }
 
     /**
-     * Constructs a `ModelBase` instance with the given `TestContext` and optional URI.
+     * Constructs a `PageModelBase` instance with the given `TestContext` and optional URI.
      * If a non-null URI is provided, the WebDriver navigates to the specified URI.
      *
      * @param testContext the `TestContext` containing configuration and WebDriver information
      * @param uri         the URI to navigate to, or `null` if no navigation is required
      */
-    protected ModelBase(TestContext testContext, String uri) {
+    protected PageModelBase(TestContext testContext, String uri) {
         // Initialize the test context
         this.testContext = testContext;
 
@@ -54,6 +54,7 @@ public abstract class ModelBase implements FluentModel {
         // Navigate to the specified URI if it is not null
         if (uri != null) {
             testContext.getWebDriver().get(uri);
+            testContext.getWebDriver().manage().window().maximize();
         }
     }
 
@@ -146,7 +147,7 @@ public abstract class ModelBase implements FluentModel {
      * @return a new instance of the specified model type
      */
     @Override
-    public <T extends ModelBase> T switchModel(Class<T> type) {
+    public <T extends PageModelBase> T switchModel(Class<T> type) {
         return ModelFactory.newModel(type);
     }
 
@@ -158,7 +159,7 @@ public abstract class ModelBase implements FluentModel {
      * @return a new instance of the specified model type
      */
     @Override
-    public <T extends ModelBase> T switchModel(Class<T> type, TestContext testContext) {
+    public <T extends PageModelBase> T switchModel(Class<T> type, TestContext testContext) {
         return ModelFactory.newModel(type, testContext);
     }
 
@@ -171,7 +172,7 @@ public abstract class ModelBase implements FluentModel {
      * @return a new instance of the specified model type
      */
     @Override
-    public <T extends ModelBase> T switchModel(Class<T> type, TestContext testContext, Object... arguments) {
+    public <T extends PageModelBase> T switchModel(Class<T> type, TestContext testContext, Object... arguments) {
         // Use Optional.ofNullable to ensure that if arguments is null,
         // we default to an empty array.
         Object[] combinedArguments = Stream.concat(

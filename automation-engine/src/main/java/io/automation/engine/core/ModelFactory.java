@@ -15,13 +15,13 @@ public class ModelFactory {
     /**
      * Creates an instance of the specified model class using the provided parameters.
      *
-     * @param <T>        the type of the model class, which must extend {@code ModelBase}.
+     * @param <T>        the type of the model class, which must extend {@code PageModelBase}.
      * @param modelClass the class of the model to instantiate.
      * @param parameters the parameters to pass to the model's constructor.
      * @return an instance of the specified model class.
      * @throws ModelCreationException if the model instance cannot be created.
      */
-    public static <T extends ModelBase> T newModel(Class<T> modelClass, Object... parameters) {
+    public static <T extends PageModelBase> T newModel(Class<T> modelClass, Object... parameters) {
         try {
             // Determine the parameter types based on the provided parameters.
             Class<?>[] parameterTypes = Arrays

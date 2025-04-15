@@ -6,6 +6,8 @@ import io.automation.examples.cases.C0001;
 import io.automation.examples.cases.C0002;
 import io.automation.examples.cases.C0003;
 import io.automation.examples.cases.C0004;
+import io.qameta.allure.Flaky;
+
 import org.junit.jupiter.api.*;
 
 import java.util.Map;
@@ -31,10 +33,20 @@ public class CalculatorTest extends TestSuiteBase {
      * Test addition operation.
      */
     @Test
-    @Tag("fast")
-    @Tag("unit")
+    @Tag("example")
     @DisplayName("Test Addition")
     void t0001() {
+        new C0001().invoke();
+    }
+
+    /**
+     * Test addition operation.
+     */
+    @Test
+    @Flaky
+    @Tag("example")
+    @DisplayName("Test Addition")
+    void t0001a() {
         new C0001().invoke();
     }
 
@@ -42,8 +54,7 @@ public class CalculatorTest extends TestSuiteBase {
      * Test subtraction operation.
      */
     @Test
-    @Tag("fast")
-    @Tag("unit")
+    @Tag("example")
     @DisplayName("Test Subtraction")
     void t0002() {
         new C0002().invoke();
@@ -54,8 +65,7 @@ public class CalculatorTest extends TestSuiteBase {
      * This test is skipped for demonstration purposes.
      */
     @Test
-    @Tag("slow")
-    @Tag("integration")
+    @Tag("example")
     @Disabled("Skipping multiply test for demonstration purposes")
     @DisplayName("Test Multiplication")
     void t0003() {
@@ -66,8 +76,7 @@ public class CalculatorTest extends TestSuiteBase {
      * Test division operation, especially division by zero.
      */
     @Test
-    @Tag("fast")
-    @Tag("unit")
+    @Tag("example")
     @DisplayName("Test Division")
     void t0004() {
         new C0004().invoke();

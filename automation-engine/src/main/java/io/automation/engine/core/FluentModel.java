@@ -1,7 +1,7 @@
 package io.automation.engine.core;
 
 /**
- * Provides methods for switching between different models in a fluent API manner.
+ * Provides methods for switching between different pages in a fluent API manner.
  */
 public interface FluentModel {
     /**
@@ -11,7 +11,7 @@ public interface FluentModel {
      * @param type the {@code Class} of the model to switch to
      * @return a new instance of the specified model type
      */
-    <T extends ModelBase> T switchModel(Class<T> type);
+    <T extends PageModelBase> T switchModel(Class<T> type);
 
     /**
      * Switches to a new instance of the specified model type with the given setup model.
@@ -21,7 +21,7 @@ public interface FluentModel {
      * @param testContext the setup model containing configuration and WebDriver information
      * @return a new instance of the specified model type
      */
-    <T extends ModelBase> T switchModel(Class<T> type, TestContext testContext);
+    <T extends PageModelBase> T switchModel(Class<T> type, TestContext testContext);
 
     /**
      * Switches to a new instance of the specified model type with additional arguments.
@@ -32,5 +32,5 @@ public interface FluentModel {
      * @param arguments  additional arguments to pass to the model's constructor
      * @return a new instance of the specified model type
      */
-    <T extends ModelBase> T switchModel(Class<T> type, TestContext testContext, Object... arguments);
+    <T extends PageModelBase> T switchModel(Class<T> type, TestContext testContext, Object... arguments);
 }

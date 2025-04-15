@@ -13,7 +13,6 @@ import java.util.Map;
  * at the suite and test levels. It also manages environment properties
  * for the test suite.
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class TestSuiteBase {
     // A map to store environment properties for the test suite, initialized during construction.
     private final Map<String, Object> environmentProperties;
@@ -38,52 +37,6 @@ public abstract class TestSuiteBase {
     public Map<String, Object> getEnvironmentProperties() {
         // Return the map of environment properties initialized during the constructor.
         return environmentProperties;
-    }
-
-    /**
-     * This method is executed once before all cases in the test suite.
-     * It performs any necessary setup actions for the entire test suite.
-     * Subclasses can override the `onSetup` method to implement custom setup logic.
-     * If an exception occurs during setup, it is wrapped in a `TestSetupException`
-     * and rethrown as a `RuntimeException`.
-     */
-    @BeforeAll
-    @SuppressWarnings({"squid:S112"}) // Suppresses warnings about generic exceptions.
-    public void setup() {
-        try {
-            // Invoke the custom setup logic defined in the subclass.
-            onSetup(environmentProperties);
-        } catch (Exception e) {
-            // Wrap the exception in a TestSetupException with a descriptive message.
-            TestSetupException testSetupException =
-                    new TestSetupException("Failed to setup test suite", e.getCause());
-
-            // Rethrow the exception as a RuntimeException to fail the test suite setup.
-            throw new RuntimeException(testSetupException);
-        }
-    }
-
-    /**
-     * This method is executed after all cases in the test suite have been run.
-     * It performs any necessary cleanup actions for the entire test suite.
-     * Subclasses can override the `onTeardown` method to implement custom teardown logic.
-     * If an exception occurs during teardown, it is wrapped in a `TestTeardownException`
-     * and rethrown as a `RuntimeException`.
-     */
-    @AfterAll
-    @SuppressWarnings({"squid:S112"}) // Suppresses warnings about generic exceptions.
-    public void teardown() {
-        try {
-            // Invoke the custom teardown logic defined in the subclass.
-            onTeardown(environmentProperties);
-        } catch (Exception e) {
-            // Wrap the exception in a TestTeardownException with a descriptive message.
-            TestTeardownException testTeardownException =
-                    new TestTeardownException("Failed to teardown test suite", e.getCause());
-
-            // Rethrow the exception as a RuntimeException to fail the test suite teardown.
-            throw new RuntimeException(testTeardownException);
-        }
     }
 
     /**
