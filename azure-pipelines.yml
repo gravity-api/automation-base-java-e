@@ -28,9 +28,15 @@ steps:
     workingDirectory: './automation-tests'
     displayName: 'Set Working Directory to automation-tests'
 
-  # 4. Run the JUnit Console Launcher
+  # # 4. Run the JUnit Console Launcher - NEW
+  # - pwsh: |
+  #     java -cp target/automation-tests-1.0-SNAPSHOT.jar org.junit.platform.console.ConsoleLauncher --select-class io.automation.examples.suites.CalculatorTest --details verbose --config=junit.platform.reporting.open.xml.enabled=true --config=junit.platform.reporting.output.dir=target/test-results
+  #   workingDirectory: './automation-tests'
+  #   displayName: 'Run JUnit Console Launcher'
+
+  # 4. Run the JUnit Console Launcher - LEGACY
   - pwsh: |
-      java -cp target/automation-tests-1.0-SNAPSHOT.jar org.junit.platform.console.ConsoleLauncher --select-class io.automation.examples.suites.CalculatorTest --details verbose --config=junit.platform.reporting.open.xml.enabled=true --config=junit.platform.reporting.output.dir=target/test-results
+      java -cp target/automation-tests-1.0-SNAPSHOT.jar org.junit.platform.console.ConsoleLauncher --select-class io.automation.examples.suites.CalculatorTest --details verbose --reports-dir target/test-results
     workingDirectory: './automation-tests'
     displayName: 'Run JUnit Console Launcher'
 
