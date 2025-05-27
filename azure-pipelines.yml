@@ -59,6 +59,7 @@ steps:
       sudo npm install -g allure-commandline@2.13.8
     workingDirectory: './automation-tests'
     displayName: 'Install Node.js & Allure'
+    condition: always()
 
   # 7. Generate Allure report using Node-based Allure CLI
   - pwsh: |
@@ -66,9 +67,11 @@ steps:
       allure generate target/allure-results --clean -o target/allure-report
     workingDirectory: './automation-tests'
     displayName: 'Generate Allure Report'
+    condition: always()
 
   # 8. Publish Allure report artifact
   - task: PublishBuildArtifacts@1
+    condition: always()
     displayName: 'Publish Allure Report Artifact'
     inputs:
       PathtoPublish: 'automation-tests/target/allure-report'
