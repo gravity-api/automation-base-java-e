@@ -67,7 +67,7 @@ steps:
   # 7. Generate Allure report from allure-results
   - pwsh: |
       mkdir -p target/allure-report
-      allure generate target/allure-results -o target/allure-report --clean
+      /usr/local/bin/allure generate target/allure-results -o target/allure-report --clean
     workingDirectory: './automation-tests'
     displayName: 'Generate Allure Report'
     condition: always()
