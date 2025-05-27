@@ -70,9 +70,11 @@ steps:
       allure generate target/allure-results -o target/allure-report --clean
     workingDirectory: './automation-tests'
     displayName: 'Generate Allure Report'
+    condition: always()
 
   # 8. Publish Allure report artifact
   - task: PublishBuildArtifacts@1
+    condition: always()
     displayName: 'Publish Allure Report Artifact'
     inputs:
       PathtoPublish: 'automation-tests/target/allure-report'
