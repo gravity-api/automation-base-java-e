@@ -57,7 +57,8 @@ steps:
       # Download Allure 2.21.0
       wget https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip -O allure.zip
       unzip allure.zip -d allure
-      sudo mv allure/bin/allure /usr/local/bin/
+      # Move the CLI executable from the extracted directory to /usr/local/bin
+      sudo mv allure/allure-2.21.0/bin/allure /usr/local/bin/
       sudo chmod +x /usr/local/bin/allure
     workingDirectory: './automation-tests'
     displayName: 'Install Allure CLI'
