@@ -61,6 +61,7 @@ steps:
       sudo chmod +x /usr/local/bin/allure
     workingDirectory: './automation-tests'
     displayName: 'Install Allure CLI'
+    condition: always()
 
   # 7. Generate Allure report from allure-results
   - pwsh: |
