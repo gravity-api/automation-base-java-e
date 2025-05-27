@@ -40,5 +40,5 @@ steps:
     displayName: 'Publish JUnit Test Results'
     inputs:
       testResultsFormat: 'JUnit'
-      testResultsFiles: 'automation-tests/target/test-results/*.xml'
+      testResultsFiles: '**/*.xml'
       failTaskOnFailedTests: true
