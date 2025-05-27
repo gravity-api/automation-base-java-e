@@ -30,10 +30,7 @@ steps:
 
   # 4. Run the JUnit Console Launcher
   - pwsh: |
-      java -cp target/automation-tests-1.0-SNAPSHOT.jar \
-           org.junit.platform.console.ConsoleLauncher \
-           --select-class io.automation.examples.suites.CalculatorTest \
-           --details verbose
+      java -cp target/automation-tests-1.0-SNAPSHOT.jar org.junit.platform.console.ConsoleLauncher --select-class io.automation.examples.suites.CalculatorTest --details verbose
     workingDirectory: './automation-tests'
     displayName: 'Run JUnit Console Launcher'
 
