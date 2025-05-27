@@ -49,3 +49,30 @@ steps:
       testResultsFiles: '*.xml'
       searchFolder: 'automation-tests/target/test-results'
       failTaskOnFailedTests: true
+
+  # 6. Install Allure CLI via shell
+  - pwsh: |
+      sudo apt-get update
+      sudo apt-get install -y wget unzip
+      # Download Allure 2.21.0
+      wget https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip -O allure.zip
+      unzip allure.zip -d allure
+      sudo mv allure/bin/allure /usr/local/bin/
+      sudo chmod +x /usr/local/bin/allure
+    workingDirectory: './automation-tests'
+    displayName: 'Install Allure CLI'
+
+  # 7. Generate Allure report from allure-results
+  - pwsh: |
+      mkdir -p target/allure-report
+      allure generate target/allure-results -o target/allure-report --clean
+    workingDirectory: './automation-tests'
+    displayName: 'Generate Allure Report'
+
+  # 8. Publish Allure report artifact
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Allure Report Artifact'
+    inputs:
+      PathtoPublish: 'automation-tests/target/allure-report'
+      ArtifactName: 'AllureReport'
+      publishLocation: 'Container'
