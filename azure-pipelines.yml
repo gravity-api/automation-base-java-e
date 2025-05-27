@@ -36,6 +36,7 @@ steps:
 
   # 5. Publish JUnit test results
   - task: PublishTestResults@2
+    condition: always()
     displayName: 'Publish JUnit Test Results'
     inputs:
       testResultsFormat: 'JUnit'
