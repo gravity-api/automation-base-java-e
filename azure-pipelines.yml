@@ -30,7 +30,7 @@ steps:
 
   # 4. Run the JUnit Console Launcher
   - pwsh: |
-      java -cp target/automation-tests-1.0-SNAPSHOT.jar org.junit.platform.console.ConsoleLauncher --select-class io.automation.examples.suites.CalculatorTest --details verbose
+      java -cp target/automation-tests-1.0-SNAPSHOT.jar org.junit.platform.console.ConsoleLauncher --select-class io.automation.examples.suites.CalculatorTest --details verbose --config=junit.platform.reporting.open.xml.enabled=true --config=junit.platform.reporting.output.dir=target/test-results
     workingDirectory: './automation-tests'
     displayName: 'Run JUnit Console Launcher'
 
@@ -40,5 +40,5 @@ steps:
     displayName: 'Publish JUnit Test Results'
     inputs:
       testResultsFormat: 'JUnit'
-      testResultsFiles: '**/*.xml'
+      testResultsFiles: 'automation-tests/target/test-results/*.xml'
       failTaskOnFailedTests: true
