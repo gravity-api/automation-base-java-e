@@ -1,0 +1,46 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  # 1 & 2. Install Maven & Java 21 via apt
+  - pwsh: |
+      sudo apt-get update
+      sudo apt-get install -y maven openjdk-21-jdk
+    displayName: 'Install Maven & Java 21'
+
+  # 3. Build without tests
+  - pwsh: |
+      mvn clean package -DskipTests
+    displayName: 'Maven Clean & Package'
+
+  # Change working directory to automation-tests for subsequent steps
+  - pwsh: |
+      # no-op to set workingDirectory property
+      Write-Host 'Switching context'
+    workingDirectory: './automation-tests'
+    displayName: 'Set Working Directory to automation-tests'
+
+  # 4. Run the JUnit Console Launcher
+  - pwsh: |
+      java -cp target/automation-tests-1.0-SNAPSHOT.jar \
+           org.junit.platform.console.ConsoleLauncher \
+           --select-class io.automation.examples.suites.CalculatorTest \
+           --details verbose
+    workingDirectory: './automation-tests'
+    displayName: 'Run JUnit Console Launcher'
+
+  # 5. Publish JUnit test results
+  - task: PublishTestResults@2
+    displayName: 'Publish JUnit Test Results'
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'automation-tests/target/test-results/*.xml'
+      failTaskOnFailedTests: true
